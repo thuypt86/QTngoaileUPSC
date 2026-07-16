@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UPSC — Quy trình MV-01 · Phê duyệt ngoại lệ chính sách margin (deal)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1E3A5F; --blue:#2E75B6; --teal:#1A7B8A; --green:#1F7A4D; --orange:#C55A11;
+  --red:#B22222; --purple:#5B2D8E; --indigo:#3730A3; --gray:#6B7280;
+  --lblue:#D6E4F0; --lgreen:#D9EAD3; --lorange:#FCE4D6; --lred:#FDECEA;
+  --lpurple:#EDE7F6; --lindigo:#E0E7FF; --bg:#EEEDF7; --card:#F0F0F8; --border:#CBD5E1;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Be Vietnam Pro','Segoe UI',sans-serif;background:var(--bg);min-height:100vh;color:#1a1a1a;font-size:14px}
+.header{background:linear-gradient(120deg,#10204a 0%,#1E3A5F 55%,#2E75B6 100%);padding:22px 32px 18px;color:#fff}
+.header-eyebrow{font-size:10px;opacity:.75;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;font-weight:700}
+.header-title{font-size:23px;font-weight:900;letter-spacing:-.5px}
+.header-sub{font-size:13px;opacity:.85;margin-top:5px}
+.tabs{margin-top:15px;display:flex;gap:8px;flex-wrap:wrap}
+.tab-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:6px 14px;font-size:12px;font-weight:600;cursor:pointer;transition:.15s;font-family:inherit}
+.tab-btn:hover{background:rgba(255,255,255,.15)}
+.tab-btn.active{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.6);font-weight:800}
+.body-wrap{padding:24px 28px}
+.tab-panel{display:none}
+.tab-panel.active{display:flex;gap:20px;width:100%;align-items:flex-start}
+#panel-phases.active,#panel-approval.active,#panel-handover.active{flex-direction:column}
+.card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 16px rgba(0,0,0,.08)}
+.hint-badge{background:var(--lindigo);border-radius:6px;padding:3px 10px;font-size:11px;color:var(--indigo);font-weight:700;display:inline-block;margin-bottom:18px;border:1px solid #c7d2fe}
+.sec-title{font-size:17px;font-weight:900;color:var(--navy);margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--gray);margin-bottom:18px}
+.flow-card{flex:0 0 600px;width:600px}
+.detail-card{flex:1;min-width:0;overflow:hidden;position:sticky;top:14px}
+.swimlane-wrap{display:flex;gap:0}
+.role-col{width:96px;flex-shrink:0;display:flex;flex-direction:column}
+.role-cell{display:flex;align-items:center;justify-content:flex-end;padding-right:10px;border-right:3px solid;font-size:10px;font-weight:800;text-align:right;line-height:1.3}
+.flow-col{flex:1;display:flex;flex-direction:column;align-items:center;padding-left:16px}
+.lane-marker{width:0;height:0}
+.node-start{background:linear-gradient(135deg,#1E3A5F,#2E75B6);border-radius:30px;padding:9px 22px;color:#fff;font-weight:900;font-size:12.5px;box-shadow:0 3px 14px rgba(46,117,182,.4);text-align:center;max-width:300px}
+.node-end{background:linear-gradient(135deg,#1F7A4D,#1A7B8A);border-radius:30px;padding:9px 22px;color:#fff;font-weight:900;font-size:12.5px;box-shadow:0 3px 14px rgba(31,122,77,.35);text-align:center}
+.node{border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);transition:transform .18s,box-shadow .18s;user-select:none;text-align:center;width:248px}
+.node:hover{transform:scale(1.03);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.node .nlabel{color:#fff;font-weight:700;font-size:12.5px;line-height:1.3}
+.node .nsub{color:#fff;opacity:.85;font-size:10.5px;margin-top:2px}
+.phase-label{display:flex;align-items:center;gap:8px;background:linear-gradient(90deg,var(--navy),var(--blue));color:#fff;border-radius:8px;padding:6px 14px;font-size:11px;font-weight:800;margin:10px 0;box-shadow:0 2px 8px rgba(30,58,95,.25)}
+.phase-num{background:rgba(255,255,255,.25);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900}
+.gate-badge{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:5px 12px;box-shadow:0 2px 6px rgba(0,0,0,.13);margin-bottom:6px}
+.gate-num{background:rgba(255,255,255,.22);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:#fff}
+.gate-label{color:#fff;font-weight:700;font-size:11px}
+.diamond-wrap{display:flex;flex-direction:column;align-items:center;position:relative}
+.diamond-outer{transform:rotate(45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.10)}
+.diamond-inner{transform:rotate(-45deg);text-align:center;padding:6px}
+.diamond-inner .dlabel{color:#fff;font-weight:700;font-size:11px;line-height:1.3}
+.arrow-down{display:flex;flex-direction:column;align-items:center}
+.arrow-label{font-size:10px;font-weight:700;margin-top:2px}
+.back-box{background:var(--lorange);border:1px solid rgba(197,90,17,.35);border-radius:8px;padding:6px 10px;font-size:10px;color:var(--orange);font-weight:700;text-align:center;width:120px}
+.back-box span{font-weight:400;display:block}
+.detail-empty{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:10px 8px}
+.de-icon{font-size:40px}.de-title{font-weight:800;color:var(--navy);font-size:16px}.de-sub{color:var(--gray);font-size:13px;line-height:1.6}
+.step-list{width:100%;margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.step-list-item{background:var(--card);border-left:4px solid;border-radius:8px;padding:8px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background .15s;text-align:left}
+.step-list-item:hover{background:#e2e8f0}
+.sli-title{font-weight:700;font-size:12.5px;color:var(--navy)}.sli-role{font-size:11px;color:var(--gray);margin-top:1px}
+.detail-content{display:none}.detail-content.active{display:block}
+.detail-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.detail-title{font-size:18px;font-weight:900;margin-bottom:6px}
+.close-btn{background:var(--card);border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:18px;color:var(--gray);font-family:inherit;line-height:1;flex-shrink:0}
+.role-tag{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:800}
+.sla-tag{display:inline-block;border-radius:4px;padding:2px 8px;font-size:10.5px;font-weight:800;background:var(--lorange);color:var(--orange);margin-left:6px}
+.section-label{font-size:11px;font-weight:800;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;margin-top:18px}
+.activity-list{display:flex;flex-direction:column;gap:6px}
+.activity-item{display:flex;gap:10px;align-items:flex-start}
+.act-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#fff;flex-shrink:0;margin-top:1px}
+.act-text{font-size:13px;color:#374151;line-height:1.5}
+.doc-list{display:flex;flex-wrap:wrap;gap:6px}
+.doc-tag{border-radius:6px;padding:4px 10px;font-size:12px;font-weight:700}
+.info-box{border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;line-height:1.5;border:1.5px solid}
+.gate-note{font-size:11px;color:var(--gray);margin-top:6px}
+.phases-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.phase-card{border-radius:12px;border:2px solid;padding:20px}
+.pc-badge{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:4px 12px;margin-bottom:12px;font-size:11px;font-weight:800;color:#fff}
+.pc-title{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.pc-duration{font-size:11px;font-weight:700;margin-bottom:12px}
+.pc-items{display:flex;flex-direction:column;gap:5px}
+.pc-item{display:flex;gap:8px;font-size:12px;color:#374151}
+.pc-dot{flex-shrink:0;margin-top:3px;width:7px;height:7px;border-radius:50%}
+.pc-docs{margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.pc-docs-title{font-size:10px;font-weight:800;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+.pc-doc-tag{display:inline-block;border-radius:4px;padding:2px 8px;font-size:10.5px;font-weight:700;margin:2px 2px 0 0}
+.appr-flow{display:flex;flex-direction:column}
+.appr-step{display:flex;gap:0}
+.appr-left{width:52px;display:flex;flex-direction:column;align-items:center}
+.appr-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px;flex-shrink:0}
+.appr-line{width:2px;flex:1;min-height:14px;opacity:.3}
+.appr-body{flex:1;padding-bottom:20px;padding-left:12px}
+.appr-step-title{font-weight:800;font-size:14px;color:var(--navy);margin-bottom:3px}
+.appr-what{font-size:12px;color:var(--gray);margin-bottom:6px}
+.appr-body ul{margin:4px 0 0 0;padding-left:18px;font-size:12.5px;color:#374151}
+.appr-body li{margin-bottom:3px}
+.appr-confirm{display:inline-flex;align-items:center;gap:5px;border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;margin-top:8px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{background:var(--navy);color:#fff;font-size:12px;font-weight:700;padding:8px 12px;text-align:left}
+.tbl td{padding:8px 12px;font-size:12px;border-bottom:1px solid var(--border)}
+.tbl tr:nth-child(even) td{background:var(--card)}
+.check-list{display:flex;flex-direction:column;gap:8px}
+.gate-pill{display:inline-flex;align-items:center;gap:6px;background:var(--lindigo);border:1px solid #c7d2fe;border-radius:20px;padding:5px 12px;font-size:11.5px;font-weight:700;color:var(--indigo);margin:0 8px 8px 0}
+.imgwrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:#fff;padding:10px}
+.imgwrap img{display:block;min-width:880px;width:100%}
+details{background:#fff;border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-top:12px}
+summary{cursor:pointer;font-weight:700;color:var(--blue)}
+.legend{padding:12px 28px 24px;display:flex;gap:16px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--gray)}
+.leg-dot{width:13px;height:13px;border-radius:3px}
+.leg-diamond{width:13px;height:13px;transform:rotate(45deg)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fcard{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;border-top:4px solid var(--teal)}
+.fcard h4{font-size:14px;color:var(--navy);margin-bottom:4px}
+.fcard .fc-name{font-size:12px;color:var(--teal);font-weight:700;margin-bottom:8px}
+.fcard p{font-size:12.5px;color:var(--gray)}
+.form-a{text-decoration:none;display:block;color:inherit}.fcard-link{transition:transform .15s,box-shadow .15s}.fcard-link:hover{box-shadow:0 4px 16px rgba(0,0,0,.14);border-top-color:var(--blue);transform:translateY(-2px)}
+@media(max-width:900px){#panel-flow{flex-direction:column}.flow-card{flex:1 1 auto;width:100%}.phases-grid,.grid3,.grid2{grid-template-columns:1fr}}
+
+.modal-ov{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:flex-start;justify-content:center;z-index:100;overflow-y:auto;padding:30px 16px}
+.modal-ov.open{display:flex}
+.modal{background:#fff;border-radius:14px;max-width:840px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;margin-bottom:40px}
+.modal-head{background:linear-gradient(120deg,#1E3A5F,#2E75B6);color:#fff;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2}
+.mh-code{font-size:11px;opacity:.85;font-weight:700;letter-spacing:1px}
+.mh-title{font-size:16px;font-weight:800;margin-top:2px}
+.modal-close{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:6px;width:30px;height:30px;font-size:20px;cursor:pointer;flex-shrink:0}
+.modal-body{padding:20px 24px}
+.fm-org{font-size:11.5px;color:var(--gray);font-weight:700;margin-bottom:6px}
+.fm-name{font-size:16px;font-weight:900;color:var(--navy)}
+.fm-sub{font-size:12px;color:var(--gray);font-style:italic;margin-bottom:6px}
+.fm-sec{font-size:11.5px;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.4px;margin:16px 0 8px}
+.fm-info{display:grid;grid-template-columns:1fr 1fr;gap:2px 22px}
+.fm-info .fi{font-size:12.5px;border-bottom:1px dashed #d9d9d9;padding:5px 0}
+.fm-info b{color:var(--navy)}
+.fm-tbl{width:100%;border-collapse:collapse;margin:2px 0 6px}
+.fm-tbl th{background:var(--lblue);color:var(--navy);font-size:11px;font-weight:700;padding:6px 8px;border:1px solid #cbd5e1;text-align:left}
+.fm-tbl td{padding:6px 8px;font-size:11.5px;border:1px solid #cbd5e1;vertical-align:top}
+.fm-box{border:1px solid #cbd5e1;border-radius:8px;height:52px;background:#fbfcfe;margin-bottom:6px}
+.fm-note{background:#f0f9ff;border-left:3px solid var(--blue);padding:8px 12px;font-size:12px;border-radius:6px;margin-bottom:6px;color:#0c4a6e}
+.fm-choice{font-size:13px;font-weight:600;margin:4px 0 8px;color:var(--navy)}
+.fm-sign{display:flex;gap:12px;margin-top:16px;flex-wrap:wrap}
+.fm-sign .fs{flex:1;min-width:120px;text-align:center;border-top:1px solid #cbd5e1;padding-top:8px}
+.fm-sign b{display:block;color:var(--navy);font-size:11.5px}
+.fm-sign span{color:var(--gray);font-style:italic;font-size:10.5px}
+.fm-dl{display:inline-block;margin-top:16px;background:var(--blue);color:#fff;padding:8px 16px;border-radius:8px;font-size:12.5px;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-eyebrow">UPSC · Hệ thống quy trình</div>
+  <div class="header-title">🤝 Quy trình MV-01 — Phê duyệt ngoại lệ chính sách margin (deal khách hàng)</div>
+  <div class="header-sub">Nhóm 3 · Margin &amp; nguồn vốn — Ngoại lệ: LTV mã · giá chặn · room · hạn mức · lãi suất</div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="flow">🔄 Luồng xử lý</button>
+    <button class="tab-btn" data-tab="phases">📐 5 Giai đoạn</button>
+    <button class="tab-btn" data-tab="approval">✅ Phê duyệt &amp; Checklist</button>
+    <button class="tab-btn" data-tab="handover">📦 Biểu mẫu · SLA · Tiêu chí</button>
+  </div>
+</div>
+<div class="body-wrap">
+  <div class="tab-panel active" id="panel-flow">
+    <div class="card flow-card">
+      <div class="hint-badge">🏗️ Nhấn vào từng bước để xem chi tiết trách nhiệm, SLA, biểu mẫu</div>
+      <div class="swimlane-wrap">
+        <div class="role-col" id="roleCol"></div>
+        <div class="flow-col" id="flowCol"></div>
+      </div>
+    </div>
+    <div class="card detail-card">
+      <div class="detail-empty" id="detailEmpty">
+        <div class="de-icon">🏗️</div>
+        <div class="de-title">Nhấn vào một bước trên lưu đồ</div>
+        <div class="de-sub">để xem trách nhiệm, SLA, đầu vào/ra và biểu mẫu bắt buộc</div>
+        <div class="step-list" id="stepList"></div>
+      </div>
+      <div class="detail-content" id="detailContent"></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="panel-phases">
+    <div class="card" style="width:100%">
+      <div class="sec-title">📐 5 Giai đoạn của quy trình</div>
+      <div class="sec-sub">Mỗi giai đoạn có thời lượng tham chiếu, công việc chính và tài liệu/biểu mẫu bắt buộc.</div>
+      <div class="phases-grid" id="phasesGrid"></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="panel-approval">
+    <div class="card" style="width:100%">
+      <div class="sec-title">✅ Các cấp &amp; nội dung phê duyệt</div>
+      <div class="sec-sub">Nguyên tắc: đề xuất (MG) → GĐ Môi giới → thẩm định song song (P.QTRR rủi ro ∥ P.NCPT cổ phiếu/DN; hiệu quả/ROI do MG ước tính) → TGĐ phê duyệt → KH xác nhận. Mọi deal đều trình TGĐ.</div>
+      <div class="appr-flow" id="apprFlow"></div>
+    </div>
+    <div class="card" style="width:100%;margin-top:18px">
+      <div class="sec-title">🚦 Các Gate (điểm kiểm soát)</div>
+      <div class="sec-sub">Phải đạt trước khi chuyển bước tiếp theo.</div>
+      <div id="gateList"></div>
+    </div>
+    <div class="card" style="width:100%;margin-top:18px">
+      <div class="sec-title">📋 Checklist deal có hiệu lực</div>
+      <div class="sec-sub">Điều kiện bắt buộc trước khi chính sách ngoại lệ được cài đặt & có hiệu lực.</div>
+      <div class="check-list" id="checkList"></div>
+    </div>
+  </div>
+  <div class="tab-panel" id="panel-handover">
+    <div class="card" style="width:100%">
+      <div class="sec-title">📦 Biểu mẫu &amp; hồ sơ của quy trình</div>
+      <div class="sec-sub">Nhấn vào từng thẻ để mở file biểu mẫu tương ứng (Word / Excel).</div>
+      <div class="grid3" id="formsGrid"></div>
+    </div>
+    <div class="card" style="width:100%;margin-top:18px">
+      <div class="sec-title">⏱ SLA theo bước</div>
+      <div class="sec-sub">Thời hạn xử lý cam kết và hành động escalation khi quá hạn.</div>
+      <table class="tbl" id="slaTable"><thead><tr><th>Mã</th><th>Bước</th><th>Đơn vị</th><th>SLA</th><th>Escalation</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="card" style="width:100%;margin-top:18px">
+      <div class="sec-title">🎯 Tiêu chí có thể phê duyệt ngoại lệ</div>
+      <div class="sec-sub">Các thông số chính sách được phép điều chỉnh riêng cho khách hàng deal.</div>
+      <table class="tbl" id="critTable"><thead><tr><th>Tiêu chí ngoại lệ</th><th>Nội dung điều chỉnh</th><th>Kiểm soát / giới hạn</th></tr></thead><tbody></tbody></table>
+    </div>
+    <div class="card" style="width:100%;margin-top:18px">
+      <div class="sec-title">⚡ Sự kiện kích hoạt rà soát &amp; điều chỉnh</div>
+      <div class="sec-sub">Định kỳ hoặc bất thường — cơ sở để P.QTRR đề xuất điều chỉnh khoản vay ngoại lệ.</div>
+      <table class="tbl" id="eventsTable"><thead><tr><th>Nhóm sự kiện</th><th>Ví dụ / dấu hiệu</th><th>Hành động</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+</div>
+<div class="legend" id="legend">
+  <div class="legend-item"><span class="leg-dot" style="background:#475569"></span>Khách hàng</div>
+  <div class="legend-item"><span class="leg-dot" style="background:#B22222"></span>Môi giới (MG)</div>
+  <div class="legend-item"><span class="leg-dot" style="background:#9A3412"></span>GĐ Môi giới</div>
+  <div class="legend-item"><span class="leg-dot" style="background:#1A7B8A"></span>P.QTRR</div>
+  <div class="legend-item"><span class="leg-dot" style="background:#1F7A4D"></span>P.NCPT</div>
+  <div class="legend-item"><span class="leg-dot" style="background:#5B2D8E"></span>Tổng Giám đốc</div>
+  <div class="legend-item"><span class="leg-dot" style="background:#C55A11"></span>P.DVCK</div>
+  <div class="legend-item"><span class="leg-diamond" style="background:#C55A11"></span>Gate / điểm quyết định</div>
+  <div class="legend-item">👆 Nhấn node để xem chi tiết</div>
+</div>
+<script>
+const C={KH:'#475569',MG:'#B22222',GDMG:'#9A3412',KSRR:'#1A7B8A',PTSP:'#1F7A4D',TGD:'#5B2D8E',DVTC:'#C55A11',green:'#1F7A4D'};
+const LANE={KH:'Khách hàng',MG:'Môi giới (MG)',GDMG:'GĐ Môi giới',KSRR:'P.QTRR',PTSP:'P.NCPT',TGD:'Tổng Giám đốc',DVTC:'P.DVCK'};
+const STEPS={
+ b1:{title:'Khách hàng đề xuất ngoại lệ',role:'Khách hàng',roleK:'KH',sla:'—',
+     info:'Khách hàng có nhu cầu chính sách margin đặc biệt (deal) đề xuất qua nhân viên môi giới.',
+     items:['Nêu nhu cầu ngoại lệ: LTV mã / giá chặn / room / hạn mức / lãi suất','Cung cấp thông tin tài khoản & danh mục dự kiến'],
+     docs:['BM-01 Phiếu đề xuất ngoại lệ']},
+ b2:{title:'Môi giới đánh giá KH & lập đề xuất deal',role:'Môi giới (MG)',roleK:'MG',sla:'2 giờ',
+     info:'Môi giới đánh giá khách hàng, ước tính hiệu quả/ROI và lập đề xuất deal trình Giám đốc Môi giới.',
+     items:['Đánh giá năng lực, lịch sử giao dịch & tiềm năng khách hàng','Phân định rõ Deal trading / Deal vay nợ','Ước tính hiệu quả/ROI: phí, lãi, doanh thu, LN theo tỷ lệ/LS/room/pool đề xuất','Xác định tiêu chí ngoại lệ & lý do; thời gian vay (nếu có)','Hình thức GD: lưu ký CK làm TSĐB / nộp tiền thực hiện trading','Lập hồ sơ đề xuất deal'],
+     docs:['BM-01 Phiếu đề xuất ngoại lệ (kèm BM-02 bảng tính ROI)']},
+ b3:{title:'Giám đốc Môi giới phê duyệt',role:'GĐ Môi giới',roleK:'GDMG',sla:'2 giờ',
+     info:'Đồng thuận cấp kinh doanh trước khi chuyển thẩm định rủi ro & hiệu quả.',
+     items:['Xem xét đề xuất deal của môi giới','Phê duyệt / điều chỉnh đề xuất trước khi trình thẩm định'],
+     docs:['BM-01 (ký GĐ MG)'],gate:{num:1,label:'GĐ Môi giới đồng thuận'}},
+ b4:{title:'P.QTRR thẩm định rủi ro',role:'P.QTRR',roleK:'KSRR',sla:'24 giờ',
+     info:'Thực hiện SONG SONG với P.NCPT. P.QTRR cho ý kiến về rủi ro của deal (24 giờ kể từ khi nhận thông tin).',
+     items:['Đánh giá rủi ro deal: LTV / giá chặn / room / hạn mức','Kiểm tra giới hạn pháp luật (3% VCSH/KH; tập trung mã–nhóm)','Nêu điều kiện kiểm soát kèm theo (nếu có)'],
+     docs:['BM-03 Ý kiến thẩm định rủi ro']},
+ b5:{title:'P.NCPT thẩm định cổ phiếu, doanh nghiệp',role:'P.NCPT',roleK:'PTSP',sla:'24 giờ',
+     info:'Thực hiện SONG SONG với P.QTRR. Đánh giá cổ phiếu, doanh nghiệp & khả năng trả nợ (24 giờ kể từ khi nhận thông tin).',
+     items:['Đánh giá tình hình kinh doanh','Đánh giá định giá cổ phiếu','Đánh giá vấn đề trọng yếu về khả năng trả nợ','Kiểm tra Blacklist (vốn hóa < 100 tỷ; KLGD thấp theo model PL1) → nếu thuộc: loại, không đề xuất'],
+     docs:['Báo cáo thẩm định NCPT']},
+ b6:{title:'Tổng Giám đốc phê duyệt deal',role:'Tổng Giám đốc',roleK:'TGD',sla:'12 giờ',
+     info:'Mọi deal ngoại lệ đều trình TGĐ phê duyệt (tổng hợp ý kiến P.QTRR & P.NCPT, đánh giá hiệu quả của MG).',
+     items:['Xem xét tờ trình; ý kiến P.QTRR (rủi ro) & P.NCPT (cổ phiếu/DN); đánh giá hiệu quả (MG)','Phê duyệt / từ chối / điều chỉnh chính sách ngoại lệ'],
+     docs:['BM-04 Tờ trình phê duyệt deal'],gate:{num:2,label:'TGĐ phê duyệt deal'}},
+ b7:{title:'P.QTRR thông báo kết quả tới Môi giới',role:'P.QTRR',roleK:'KSRR',sla:'8 giờ',
+     info:'P.QTRR là đầu mối thông báo kết quả phê duyệt để môi giới phản hồi khách hàng.',
+     items:['Thông báo kết quả & điều kiện kèm theo tới môi giới','Ghi nhận hồ sơ phê duyệt'],
+     docs:['Thông báo kết quả phê duyệt']},
+ b8:{title:'Môi giới thông báo & khách hàng xác nhận',role:'Môi giới ↔ Khách hàng',roleK:'MG',sla:'8 giờ (KH phản hồi ≤ 2 ngày)',
+     info:'Môi giới thông báo kết quả phê duyệt tới khách hàng; khách hàng xác nhận đồng ý chính sách — hiệu lực từ ngày thống nhất (gộp thông báo & xác nhận vào một bước). KH phản hồi trong ≤ 2 ngày làm việc.',
+     items:['Trao đổi chính sách ngoại lệ được duyệt & điều kiện kèm theo','Khách hàng xác nhận đồng ý & chốt ngày hiệu lực'],
+     docs:['BM-05 Thông báo & xác nhận KH'],gate:{num:3,label:'KH xác nhận đồng ý'}},
+ b9:{title:'P.DVCK cài đặt thông số ngoại lệ',role:'P.DVCK',roleK:'DVTC',sla:'8 giờ',
+     info:'Cài đặt các thông số ngoại lệ được duyệt lên hệ thống cho tài khoản khách hàng.',
+     items:['Cài đặt LTV mã / giá chặn / room / hạn mức / lãi suất','Gắn hiệu lực theo ngày thống nhất'],
+     docs:['BM-06 Biên bản cài đặt']},
+ b10:{title:'P.QTRR kiểm soát độc lập việc cài đặt',role:'P.QTRR',roleK:'KSRR',sla:'4 giờ',
+     info:'Maker (P.DVCK) – Checker (P.QTRR): đối chiếu thông số cài đặt so với phê duyệt.',
+     items:['So khớp thông số cài đặt vs quyết định phê duyệt','Xử lý & ghi nhận sai lệch (nếu có)'],
+     docs:['BM-06 (phần kiểm soát)'],gate:{num:4,label:'Cài đặt khớp phê duyệt'}},
+ m1:{title:'Theo dõi hiệu quả & rủi ro (toàn bộ KH deal)',role:'P.QTRR chủ trì (∥ NCPT, MG)',roleK:'KSRR',sla:'định kỳ / bất thường',
+     info:'Theo dõi định kỳ & bất thường trên FILE THEO DÕI CHUNG toàn bộ khách hàng được duyệt ngoại lệ. Toàn bộ KH deal chỉ P.QTRR được phân quyền theo dõi.',
+     items:['Rủi ro (P.QTRR): dư nợ, tỷ lệ ký quỹ, mức sử dụng hạn mức, dấu hiệu call margin','Cổ phiếu/DN (P.NCPT): theo dõi biến động mã & doanh nghiệp','Hiệu quả (MG): doanh thu/phí/lãi thực tế so cam kết, ROI thực tế','Rà soát định kỳ & khi bất thường'],
+     docs:['BM-07 File theo dõi toàn bộ KH deal']},
+ m2:{title:'Đề xuất điều chỉnh khoản vay ngoại lệ',role:'P.QTRR',roleK:'KSRR',sla:'≤ 4 giờ (bất thường)',
+     info:'P.QTRR đề xuất điều chỉnh (siết/nới) chính sách ngoại lệ dựa trên thực tế & rủi ro.',
+     items:['Đánh giá tác động & lý do điều chỉnh','Đề xuất điều chỉnh: LTV / giá chặn / room / hạn mức / lãi suất'],
+     docs:['BM-07 / BM-08']},
+ m3:{title:'Tổng Giám đốc phê duyệt điều chỉnh',role:'Tổng Giám đốc',roleK:'TGD',sla:'4 giờ',
+     info:'Điều chỉnh chính sách ngoại lệ phải được TGĐ phê duyệt trước khi áp dụng.',
+     items:['Xem xét đề xuất điều chỉnh & ý kiến P.QTRR','Phê duyệt điều chỉnh'],
+     docs:['BM-08']},
+ m4:{title:'MG thông báo & KH xác nhận điều chỉnh',role:'Môi giới (MG)',roleK:'MG',sla:'≥ 1 ngày',
+     info:'Môi giới thông báo và làm việc với khách hàng để xác nhận điều chỉnh.',
+     items:['Thông báo nội dung điều chỉnh & ngày hiệu lực','Làm việc với KH xác nhận đồng ý điều chỉnh'],
+     docs:['BM-05 / BM-08']},
+ m5:{title:'P.DVCK cài đặt lại & P.QTRR xử lý hệ quả tài khoản',role:'P.DVCK / P.QTRR',roleK:'DVTC',sla:'trong ngày',
+     info:'P.DVCK cài đặt lại; P.QTRR kiểm soát độc lập & xử lý hệ quả (call margin, thu nợ đến hạn).',
+     items:['Cài đặt lại thông số theo điều chỉnh (P.QTRR kiểm soát độc lập)','P.QTRR xử lý call/force (nếu có); P.DVCK thu nợ (nếu có)','Đối chiếu maker–checker sau cài đặt'],
+     docs:['BM-06 / BM-08 Phiếu điều chỉnh & xử lý']},
+};
+const FLOW=[
+ {t:'start',role:'KH',label:'Khách hàng có nhu cầu chính sách margin đặc biệt'},
+ {t:'phase',num:'1',label:'GIAI ĐOẠN 1 · Đề xuất & đánh giá (khối kinh doanh)'},
+ {t:'arrow'},
+ {t:'node',id:'b1',role:'KH'},
+ {t:'arrow'},
+ {t:'node',id:'b2',role:'MG'},
+ {t:'arrow'},
+ {t:'node',id:'b3',role:'GDMG'},
+ {t:'arrow'},
+ {t:'diamond',role:'GDMG',label:'Đồng thuận?',color:C.GDMG,back:'Không',backsub:'trả lại môi giới (B2)',pass:'✓ Đồng thuận'},
+ {t:'phase',num:'2',label:'GIAI ĐOẠN 2 · Thẩm định song song'},
+ {t:'arrow',label:'P.QTRR ∥ P.NCPT thẩm định song song'},
+ {t:'node',id:'b4',role:'KSRR'},
+ {t:'arrow'},
+ {t:'node',id:'b5',role:'PTSP'},
+ {t:'phase',num:'3',label:'GIAI ĐOẠN 3 · Phê duyệt & phản hồi khách hàng'},
+ {t:'arrow'},
+ {t:'node',id:'b6',role:'TGD'},
+ {t:'arrow'},
+ {t:'diamond',role:'TGD',label:'Phê duyệt?',color:C.TGD,back:'Từ chối',backsub:'thông báo KH (B7→B8)',pass:'✓ Duyệt'},
+ {t:'node',id:'b7',role:'KSRR'},
+ {t:'arrow'},
+ {t:'node',id:'b8',role:'MG'},
+ {t:'phase',num:'4',label:'GIAI ĐOẠN 4 · Cài đặt (Maker–Checker)'},
+ {t:'arrow'},
+ {t:'node',id:'b9',role:'DVTC'},
+ {t:'arrow'},
+ {t:'node',id:'b10',role:'KSRR'},
+ {t:'arrow'},
+ {t:'diamond',role:'KSRR',label:'Khớp?',color:C.KSRR,back:'Lệch',backsub:'cài đặt lại (B9)',pass:'✓ Khớp'},
+ {t:'end',role:'DVTC',label:'Deal có hiệu lực'},
+ {t:'phase',num:'5',label:'GIAI ĐOẠN 5 · Giám sát & điều chỉnh'},
+ {t:'arrow'},
+ {t:'node',id:'m1',role:'KSRR'},
+ {t:'arrow'},
+ {t:'diamond',role:'KSRR',label:'Cần điều chỉnh?',color:C.DVTC,back:'Không',backsub:'tiếp tục theo dõi',pass:'✓ Có'},
+ {t:'node',id:'m2',role:'KSRR'},
+ {t:'arrow'},
+ {t:'node',id:'m3',role:'TGD'},
+ {t:'arrow'},
+ {t:'node',id:'m4',role:'MG'},
+ {t:'arrow'},
+ {t:'node',id:'m5',role:'DVTC'},
+ {t:'end',role:'DVTC',label:'Hoàn tất điều chỉnh & xử lý hệ quả'},
+];
+const downArrow=(label)=>`<div class="arrow-down"><svg width="20" height="${label?40:30}"><line x1="10" y1="0" x2="10" y2="${label?28:22}" stroke="#9aa3b2" stroke-width="2"/><polygon points="5,${label?28:22} 15,${label?28:22} 10,${label?36:30}" fill="#9aa3b2"/></svg>${label?`<span class="arrow-label" style="color:#6B7280">${label}</span>`:''}</div>`;
+function renderFlow(){
+ let html='',zones=[],cur=null,z=-1;
+ FLOW.forEach(r=>{
+   if(['start','node','end'].includes(r.t) && r.role!==cur){cur=r.role;z++;zones.push(cur);html+=`<div class="lane-marker" id="lm${z}"></div>`;}
+   if(r.t==='start'){html+=`<div class="node-start">🚀 ${r.label}</div>`;}
+   else if(r.t==='end'){html+=`<div class="node-end">🏁 ${r.label}</div>`;}
+   else if(r.t==='phase'){html+=`<div class="phase-label"><span class="phase-num">${r.num}</span>${r.label}</div>`;}
+   else if(r.t==='arrow'){html+=downArrow(r.label);}
+   else if(r.t==='node'){const s=STEPS[r.id];const gate=s.gate?`<div class="gate-badge" style="background:${C[r.role]};"><span class="gate-num">${s.gate.num}</span><span class="gate-label">Gate ${s.gate.num}: ${s.gate.label}</span></div>`:'';
+     html+=gate+`<div class="node" style="background:${C[r.role]}" data-step="${r.id}" onclick="toggleStep('${r.id}')"><span class="nlabel">${s.title}</span><span class="nsub">${s.role} · ⏱ ${s.sla}</span></div>`;}
+   else if(r.t==='diamond'){
+     html+=`<div class="diamond-wrap">`+
+       `<div style="position:absolute;left:-150px;top:18px;display:flex;align-items:center;gap:4px;">`+
+         `<div class="back-box">↩ ${r.back}<span>${r.backsub}</span></div>`+
+         `<svg width="40" height="16"><line x1="40" y1="8" x2="8" y2="8" stroke="${C.DVTC}" stroke-width="2" stroke-dasharray="4,2"/><polygon points="8,3 8,13 0,8" fill="${C.DVTC}"/></svg>`+
+       `</div>`+
+       `<div class="diamond-outer" style="width:92px;height:92px;background:${r.color};"><div class="diamond-inner"><div class="dlabel">${r.label}</div></div></div>`+
+       `<div class="arrow-down" style="margin-top:2px"><svg width="20" height="34"><line x1="10" y1="0" x2="10" y2="24" stroke="${C.green}" stroke-width="2"/><polygon points="5,24 15,24 10,32" fill="${C.green}"/></svg><span class="arrow-label" style="color:${C.green}">${r.pass}</span></div>`+
+     `</div>`;
+   }
+ });
+ document.getElementById('flowCol').innerHTML=html;
+ document.getElementById('roleCol').innerHTML=zones.map((r,i)=>`<div class="role-cell" id="role${i}" style="border-color:${C[r]}55;color:${C[r]}">${LANE[r]}</div>`).join('');
+ syncLanes(zones.length);
+}
+function syncLanes(n){
+ const fc=document.querySelector('.flow-col');if(!fc)return;
+ const top0=fc.getBoundingClientRect().top;
+ const tops=[];for(let i=0;i<n;i++){const el=document.getElementById('lm'+i);tops.push(el?el.getBoundingClientRect().top-top0:null);}
+ const H=fc.getBoundingClientRect().height;
+ for(let i=0;i<n;i++){const t=tops[i];const nx=(i+1<n&&tops[i+1]!=null)?tops[i+1]:H;const el=document.getElementById('role'+i);if(el&&t!=null)el.style.height=Math.max(nx-t,30)+'px';}
+}
+const stepListEl=document.getElementById('stepList');
+Object.entries(STEPS).forEach(([k,s])=>{
+ const el=document.createElement('div');el.className='step-list-item';el.style.borderLeftColor=C[s.roleK];
+ el.innerHTML=`<div><div class="sli-title">${s.title}</div><div class="sli-role">${s.role} · ⏱ ${s.sla}</div></div><span style="color:var(--gray);font-size:16px;">›</span>`;
+ el.addEventListener('click',()=>toggleStep(k));stepListEl.appendChild(el);
+});
+let activeStep=null;
+function toggleStep(k){if(activeStep===k){activeStep=null;showEmpty();unhi();}else{activeStep=k;showDetail(k);hi(k);}}
+function unhi(){document.querySelectorAll('.node[data-step]').forEach(n=>{n.style.boxShadow='0 2px 8px rgba(0,0,0,.12)';});}
+function hi(k){unhi();const el=document.querySelector(`.node[data-step="${k}"]`);if(el)el.style.boxShadow=`0 0 0 3px ${C[STEPS[k].roleK]}, 0 4px 16px rgba(0,0,0,.2)`;}
+function showEmpty(){document.getElementById('detailEmpty').style.display='';const d=document.getElementById('detailContent');d.style.display='none';d.classList.remove('active');}
+function showDetail(k){
+ const s=STEPS[k],col=C[s.roleK];
+ const info=s.info?`<div class="info-box" style="background:${col}0D;border-color:${col}44;color:${col};">💡 ${s.info}</div>`:'';
+ const gate=s.gate?`<div style="margin-bottom:14px;"><div class="gate-badge" style="background:${col};"><span class="gate-num">${s.gate.num}</span><span class="gate-label">Gate ${s.gate.num}: ${s.gate.label}</span></div><div class="gate-note">Điểm kiểm soát — phải đạt trước khi chuyển bước tiếp theo</div></div>`:'';
+ const acts=s.items.map((it,i)=>`<div class="activity-item"><span class="act-num" style="background:${col};">${i+1}</span><span class="act-text">${it}</span></div>`).join('');
+ const docs=s.docs.map(d=>`<span class="doc-tag" style="background:${col}18;border:1px solid ${col}44;color:${col};">📋 ${d}</span>`).join('');
+ const dc=document.getElementById('detailContent');
+ dc.innerHTML=`<div class="detail-header"><div><div class="detail-title" style="color:${col};">${s.title}</div>`+
+   `<span class="role-tag" style="background:${col}22;border:1px solid ${col}55;color:${col};">${s.role}</span><span class="sla-tag">⏱ SLA: ${s.sla}</span></div>`+
+   `<button class="close-btn" onclick="toggleStep('${k}')">×</button></div>`+
+   info+gate+`<div class="section-label">Hoạt động chính</div><div class="activity-list">${acts}</div>`+
+   `<div class="section-label">Biểu mẫu / tài liệu</div><div class="doc-list">${docs}</div>`;
+ document.getElementById('detailEmpty').style.display='none';dc.style.display='block';dc.classList.add('active');
+}
+document.querySelectorAll('.tab-btn').forEach(b=>{b.addEventListener('click',()=>{
+ document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+ document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+ b.classList.add('active');document.getElementById('panel-'+b.dataset.tab).classList.add('active');
+ document.getElementById('legend').style.display=b.dataset.tab==='flow'?'':'none';
+ if(b.dataset.tab==='flow')requestAnimationFrame(()=>syncLanes(document.querySelectorAll('.role-cell').length));
+});});
+const PHASES=[
+ {n:'A',h:'Đề xuất & đánh giá (khối kinh doanh)',dur:'~1 ngày làm việc',c:'#B22222',tint:'#fdf1f1',items:['KH đề xuất ngoại lệ qua môi giới','MG đánh giá KH & ước tính hiệu quả/ROI, lập đề xuất deal','GĐ Môi giới phê duyệt cấp kinh doanh'],docs:['BM-01','BM-02']},
+ {n:'B',h:'Thẩm định song song',dur:'~2 ngày · P.QTRR ∥ P.NCPT',c:'#1A7B8A',tint:'#f0faf9',items:['P.QTRR thẩm định rủi ro deal','P.NCPT thẩm định cổ phiếu, doanh nghiệp, khả năng trả nợ','Hai tuyến chạy song song rồi tổng hợp trình'],docs:['BM-03']},
+ {n:'C',h:'Phê duyệt & phản hồi khách hàng',dur:'1–3 ngày',c:'#5B2D8E',tint:'#f7f3fb',items:['TGĐ phê duyệt deal — bắt buộc mọi deal (12 giờ)','P.QTRR thông báo kết quả tới môi giới (8 giờ)','KH xác nhận đồng ý — hiệu lực từ ngày… (phản hồi ≤ 2 ngày)'],docs:['BM-04','BM-05']},
+ {n:'D',h:'Cài đặt (Maker–Checker)',dur:'Trong ngày',c:'#C55A11',tint:'#fdf4ee',items:['P.DVCK cài đặt thông số ngoại lệ','P.QTRR kiểm soát độc lập việc cài đặt','Đối chiếu khớp phê duyệt'],docs:['BM-06']},
+ {n:'E',h:'Giám sát & điều chỉnh',dur:'Định kỳ / bất thường',c:'#1F7A4D',tint:'#f0faf4',items:['Theo dõi rủi ro (P.QTRR) & cổ phiếu/DN (P.NCPT) & hiệu quả (MG) toàn bộ KH deal trên file chung','Đề xuất điều chỉnh → TGĐ phê duyệt','MG & KH xác nhận → cài đặt lại & xử lý hệ quả'],docs:['BM-07','BM-08']},
+];
+document.getElementById('phasesGrid').innerHTML=PHASES.map(p=>`<div class="phase-card" style="background:linear-gradient(160deg,#fff,${p.tint});border-color:${p.c}44;">`+
+ `<div class="pc-badge" style="background:${p.c};">Giai đoạn ${p.n}</div><div class="pc-title">${p.h}</div><div class="pc-duration" style="color:${p.c};">⏱ ${p.dur}</div>`+
+ `<div class="pc-items">${p.items.map(i=>`<div class="pc-item"><span class="pc-dot" style="background:${p.c};"></span>${i}</div>`).join('')}</div>`+
+ `<div class="pc-docs"><div class="pc-docs-title">Tài liệu bắt buộc</div>${p.docs.map(d=>`<span class="pc-doc-tag" style="background:${p.c}18;color:${p.c};">📋 ${d}</span>`).join('')}</div></div>`).join('');
+const APPR=[
+ {who:'Môi giới (MG) — Đề xuất deal & ước tính hiệu quả',c:'#B22222',what:'Đầu mối tiếp nhận & lập đề xuất ngoại lệ',pts:['Đánh giá khách hàng & tiềm năng','Xác định tiêu chí ngoại lệ: LTV · giá chặn · room · hạn mức · lãi suất','Ước tính hiệu quả/ROI; lập hồ sơ đề xuất deal'],sig:'📋 BM-01 (kèm BM-02)'},
+ {who:'Giám đốc Môi giới — Đồng thuận',c:'#9A3412',what:'Phê duyệt cấp kinh doanh trước khi thẩm định',pts:['Xem xét đề xuất của môi giới','Đồng thuận / điều chỉnh đề xuất'],sig:'✍️ Ký duyệt BM-01'},
+ {who:'P.QTRR — Thẩm định rủi ro (song song)',c:'#1A7B8A',what:'Tuyến phòng vệ thứ 2 · ý kiến rủi ro',pts:['Đánh giá rủi ro của deal','Kiểm tra giới hạn pháp luật (3% VCSH/KH; tập trung)','Nêu điều kiện kiểm soát kèm theo'],sig:'✍️ BM-03 Ý kiến thẩm định rủi ro'},
+ {who:'P.NCPT — Thẩm định cổ phiếu, doanh nghiệp (song song)',c:'#1F7A4D',what:'Đánh giá CP, DN, khả năng trả nợ, định giá',pts:['Đánh giá tình hình kinh doanh','Đánh giá định giá cổ phiếu','Vấn đề trọng yếu về khả năng trả nợ; kiểm tra Blacklist'],sig:'✍️ Báo cáo thẩm định NCPT'},
+ {who:'Tổng Giám đốc — Phê duyệt deal',c:'#5B2D8E',what:'Mọi deal ngoại lệ đều trình TGĐ',pts:['Tổng hợp ý kiến rủi ro (P.QTRR) & cổ phiếu/DN (P.NCPT), hiệu quả (MG)','Phê duyệt / từ chối / điều chỉnh','Phê duyệt cả điều chỉnh sau này'],sig:'🔏 BM-04 Tờ trình phê duyệt deal'},
+ {who:'Khách hàng — Xác nhận',c:'#475569',what:'KH đồng ý chính sách — hiệu lực từ ngày…',pts:['Xác nhận đồng ý chính sách ngoại lệ','Chốt ngày hiệu lực áp dụng'],sig:'✍️ BM-05 KH ký xác nhận'},
+];
+document.getElementById('apprFlow').innerHTML=APPR.map((a,i)=>`<div class="appr-step"><div class="appr-left"><div class="appr-circle" style="background:${a.c};">${i+1}</div>${i<APPR.length-1?`<div class="appr-line" style="background:${a.c};"></div>`:''}</div>`+
+ `<div class="appr-body"><div class="appr-step-title">${a.who}</div><div class="appr-what">${a.what}</div><ul>${a.pts.map(p=>`<li>${p}</li>`).join('')}</ul>`+
+ `<div class="appr-confirm" style="background:${a.c}18;color:${a.c};">${a.sig}</div></div></div>`).join('');
+const GATES=[['1','GĐ Môi giới đồng thuận','#9A3412'],['—','P.QTRR & P.NCPT thẩm định song song hoàn tất','#1A7B8A'],['2','TGĐ phê duyệt deal','#5B2D8E'],['3','Khách hàng xác nhận đồng ý','#475569'],['4','Cài đặt khớp phê duyệt (Maker–Checker)','#C55A11'],['—','TGĐ phê duyệt điều chỉnh (nếu có)','#1F7A4D']];
+document.getElementById('gateList').innerHTML=GATES.map(g=>`<span class="gate-pill" style="background:${g[2]}14;border-color:${g[2]}44;color:${g[2]};"><span style="background:${g[2]};color:#fff;border-radius:50%;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;">${g[0]}</span>${g[1]}</span>`).join('');
+const CHECK=[['Đề xuất nêu rõ tiêu chí ngoại lệ & lý do (LTV/giá chặn/room/hạn mức/lãi suất) kèm ước tính hiệu quả/ROI','MG'],['Giám đốc Môi giới phê duyệt cấp kinh doanh','GĐ MG'],['P.QTRR thẩm định rủi ro đạt & trong giới hạn pháp luật (3% VCSH/KH; tập trung)','P.QTRR'],['P.NCPT đánh giá cổ phiếu, doanh nghiệp đạt; mã không thuộc Blacklist (model PL1)','P.NCPT'],['Tổng Giám đốc phê duyệt deal (BM-04)','TGĐ'],['Khách hàng xác nhận đồng ý chính sách & ngày hiệu lực (BM-05)','KH/MG'],['Cài đặt hệ thống khớp phê duyệt (BM-06, Maker–Checker)','P.DVCK/P.QTRR'],['Hồ sơ deal lưu trữ đầy đủ','P.QTRR']];
+document.getElementById('checkList').innerHTML=CHECK.map((r,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;background:${i%2?'#fff':'#F0F0F8'};border-radius:6px;padding:8px 12px;border:1px solid var(--border);"><div style="display:flex;align-items:center;gap:8px;flex:1;"><span style="background:#1F7A4D;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0;">${i+1}</span><span style="font-size:12.5px;color:#374151;">${r[0]}</span></div><span style="background:#E0E7FF;color:#3730A3;border-radius:4px;padding:2px 8px;font-size:10px;font-weight:700;white-space:nowrap;margin-left:8px;">${r[1]}</span></div>`).join('');
+const FORMS=[['BM-01','Phiếu đề xuất ngoại lệ & đánh giá hiệu quả','Môi giới lập; tiêu chí ngoại lệ, lý do, Blacklist & ước tính hiệu quả/ROI (gộp BM-02)','UPSC_MV-01_BM-01_Phieu_de_xuat_ngoai_le.docx'],['BM-02','Bảng tính hiệu quả / ROI (tự động)','Excel công cụ tính kèm BM-01; tự tính doanh thu, chi phí vốn, LN & ROI','UPSC_MV-01_BM-02_Danh_gia_KH_ROI.xlsx'],['BM-03','Ý kiến thẩm định rủi ro (P.QTRR)','Đánh giá rủi ro deal & giới hạn pháp luật; điều kiện kiểm soát','UPSC_MV-01_BM-03_Phieu_tham_dinh_rui_ro.docx'],['BM-04','Tờ trình phê duyệt deal (trình TGĐ)','Tổng hợp ý kiến P.QTRR, P.NCPT & hiệu quả (MG); nội dung ngoại lệ trình duyệt','UPSC_MV-01_BM-04_To_trinh_phe_duyet_deal.docx'],['BM-05','Thông báo & xác nhận của khách hàng','Chính sách ngoại lệ được duyệt; KH ký đồng ý & ngày hiệu lực (phản hồi ≤ 2 ngày)','UPSC_MV-01_BM-05_Thong_bao_xac_nhan_KH.docx'],['BM-06','Biên bản cài đặt & kiểm soát độc lập','Maker (P.DVCK) – Checker (P.QTRR): cài đặt vs phê duyệt','UPSC_MV-01_BM-06_Bien_ban_cai_dat_kiem_soat.docx'],['BM-07','File theo dõi toàn bộ KH deal','P.QTRR chủ trì (∥ NCPT, MG); theo dõi rủi ro, cổ phiếu/DN & hiệu quả (Excel)','UPSC_MV-01_BM-07_File_theo_doi_KH_deal.xlsx'],['BM-08','Phiếu điều chỉnh & xử lý hệ quả tài khoản','Điều chỉnh chính sách; xử lý call margin / thu nợ đến hạn','UPSC_MV-01_BM-08_Phieu_dieu_chinh_xu_ly.docx']];
+document.getElementById('formsGrid').innerHTML=FORMS.map(f=>`<div class="fcard fcard-link" style="cursor:pointer" onclick="openForm('${f[0]}')"><h4>${f[0]} <span style="font-size:11px;color:var(--blue);font-weight:700">👁 Xem mẫu</span></h4><div class="fc-name">${f[1]}</div><p>${f[2]}</p></div>`).join('');
+const SLA=[['B2','Môi giới đánh giá & lập đề xuất deal','Môi giới','2 giờ','Nhắc môi giới hoàn tất'],['B3','GĐ Môi giới phê duyệt','GĐ Môi giới','2 giờ','Nhắc duyệt; báo khối KD'],['B4','P.QTRR thẩm định rủi ro (song song)','P.QTRR','24 giờ','Nhắc P.QTRR'],['B5','P.NCPT thẩm định cổ phiếu/DN (song song)','P.NCPT','24 giờ','Nhắc P.NCPT'],['B6','TGĐ phê duyệt deal','Tổng Giám đốc','12 giờ','Nhắc phê duyệt'],['B7','P.QTRR thông báo kết quả tới môi giới','P.QTRR','8 giờ','Nhắc thông báo'],['B8','Môi giới thông báo & KH xác nhận','Môi giới / KH','8 giờ (KH ≤ 2 ngày)','Nhắc phản hồi khách hàng'],['B9','P.DVCK cài đặt thông số ngoại lệ','P.DVCK','8 giờ','Cảnh báo chậm hiệu lực'],['B10','P.QTRR kiểm soát độc lập việc cài đặt','P.QTRR','4 giờ','Chặn hiệu lực tới khi kiểm soát xong'],['E1','Theo dõi hiệu quả & rủi ro (toàn bộ KH deal)','P.QTRR (∥ NCPT, MG)','Định kỳ / bất thường','Cảnh báo nếu thiếu rà soát'],['E2','Đề xuất điều chỉnh khoản vay ngoại lệ','P.QTRR','≤ 4 giờ (bất thường)','Leo thang lên BĐH'],['E3','TGĐ phê duyệt điều chỉnh','Tổng Giám đốc','4 giờ','Giữ trạng thái chờ duyệt'],['E4','MG thông báo & KH xác nhận điều chỉnh','Môi giới / KH','≥ 1 ngày','Chưa xác nhận → hoãn áp dụng'],['E5','P.DVCK cài đặt lại & xử lý hệ quả','P.DVCK/P.QTRR','Trong ngày','Hỗ trợ call margin / thu nợ đến hạn']];
+document.querySelector('#slaTable tbody').innerHTML=SLA.map(r=>`<tr><td style="font-weight:700">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td style="color:#C55A11;font-weight:700">${r[3]}</td><td>${r[4]}</td></tr>`).join('');
+const CRIT=[['Tỷ lệ cho vay của mã (LTV)','Nâng LTV cho mã cụ thể so với chính sách chung','Trong trần LTV theo quy định; P.QTRR thẩm định rủi ro'],['Giá chặn','Điều chỉnh giá chặn dùng tính hạn mức cho mã','Đánh giá thanh khoản & biến động giá mã (P.NCPT)'],['Room cho vay','Nới room cho vay của mã đối với khách hàng','Kiểm soát tập trung theo mã/nhóm/ngành'],['Hạn mức cho vay','Cấp hạn mức cao hơn mức chuẩn cho khách hàng','Trong trần 3% VCSH/KH & khả năng nguồn vốn'],['Lãi suất cho vay','Ưu đãi lãi suất theo hiệu quả KH; LS điều chỉnh theo nguồn & thời điểm','MG đánh giá ROI bù đắp mức ưu đãi trong phần hiệu quả']];
+document.querySelector('#critTable tbody').innerHTML=CRIT.map(r=>`<tr><td style="font-weight:700;color:#5B2D8E">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+const EVENTS=[['Định kỳ','Rà soát khoản vay ngoại lệ theo kỳ (tháng/quý)','Đánh giá lại điều kiện; gia hạn / điều chỉnh / kết thúc deal'],['Biến động tài khoản KH','Tỷ lệ ký quỹ chạm ngưỡng call margin; dư nợ tăng bất thường','Đề xuất điều chỉnh & hỗ trợ xử lý tài khoản'],['Biến động mã / thị trường','Mã vào diện cảnh báo/kiểm soát; giá giảm mạnh; thanh khoản giảm','Rà soát LTV / giá chặn / room của deal'],['Hết hạn hiệu lực deal','Chính sách ngoại lệ đến hạn','Gia hạn hoặc trở về chính sách chung'],['Thay đổi chính sách chung','Danh mục / chính sách margin chung thay đổi (MV-08)','Đối chiếu & điều chỉnh deal cho phù hợp'],['Vi phạm điều kiện kèm theo','KH không đáp ứng điều kiện kiểm soát của deal','Rà soát, siết hoặc thu hồi ngoại lệ']];
+document.querySelector('#eventsTable tbody').innerHTML=EVENTS.map(r=>`<tr><td style="font-weight:600">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('');
+
+const FORMSPEC={
+ 'BM-01':{title:'PHIẾU ĐỀ XUẤT NGOẠI LỆ CHÍNH SÁCH MARGIN & ĐÁNH GIÁ HIỆU QUẢ',sub:'Deal khách hàng — Môi giới lập (đã gộp phần đánh giá KH & hiệu quả); bảng tính ROI: BM-02 đính kèm',type:'Word',file:'UPSC_MV-01_BM-01_Phieu_de_xuat_ngoai_le.docx',secs:[
+  {t:'info',label:'I. Thông tin khách hàng',rows:['Họ tên / Tổ chức','Số tài khoản','Loại KH (cá nhân/tổ chức/cổ đông lớn/NNB/TGĐ/CT-TV HĐQT…)','Môi giới phụ trách','Giám đốc Môi giới']},
+  {t:'table',label:'II. Nội dung đề xuất ngoại lệ',head:['Tiêu chí','Mã CK / phạm vi','Chính sách chung hiện tại','Mức đề xuất'],rows:[['Mã CP đầu tiên (nếu có)','','',''],['Tỷ lệ cho vay (LTV)','','',''],['Giá chặn','','',''],['Room cho vay','','',''],['Hạn mức cho vay','','',''],['Lãi suất cho vay','','',''],['Thời gian vay (nếu có)','','','']]},
+  {t:'choice',label:'Phân loại & hình thức giao dịch',text:'☐ Deal trading   ☐ Deal vay nợ      |      ☐ Lưu ký CK làm TSĐB   ☐ Nộp tiền thực hiện trading'},
+  {t:'table',label:'III. Kiểm tra sàng lọc (Blacklist)',head:['Nội dung kiểm tra','Kết quả'],rows:[['Mã thuộc Blacklist? (vốn hóa < 100 tỷ; KLGD thấp theo model PL1) — nếu thuộc: loại, không đề xuất','☐ Không thuộc   ☐ Thuộc → loại']]},
+  {t:'box',label:'IV. Lý do & cơ sở đề xuất'},
+  {t:'info',label:'V. Đánh giá khách hàng & hiệu quả/ROI (Môi giới ước tính — chi tiết tại BM-02)',rows:['Tiềm năng giao dịch / tài sản','Lịch sử quan hệ với công ty','Hạn mức đề xuất · % sử dụng · dư nợ BQ','Doanh thu ước tính/năm (lãi vay + phí)','Lợi nhuận ròng ước tính · ROI trên dư nợ','Thời hạn hiệu lực đề xuất']},
+  {t:'sign',roles:['KHÁCH HÀNG đề xuất','MÔI GIỚI lập','GIÁM ĐỐC MÔI GIỚI duyệt']},
+ ]},
+ 'BM-02':{title:'BẢNG TÍNH HIỆU QUẢ / ROI (TỰ ĐỘNG)',sub:'Excel — công cụ tính kèm BM-01; tự tính doanh thu, chi phí vốn, lợi nhuận & ROI và tự kết luận',type:'Excel',file:'UPSC_MV-01_BM-02_Danh_gia_KH_ROI.xlsx',secs:[
+  {t:'info',label:'I. Thông tin khách hàng',rows:['Khách hàng','Số tài khoản','Môi giới phụ trách']},
+  {t:'table',label:'II. Giả định đầu vào (ví dụ mẫu)',head:['Chỉ tiêu','Giá trị mẫu'],rows:[['Hạn mức cho vay đề xuất (trđ)','5.000'],['% sử dụng hạn mức bình quân','70%'],['Dư nợ bình quân (trđ)','3.500'],['Lãi suất cho vay ngoại lệ (%/năm)','12,0%'],['Chi phí vốn công ty (%/năm)','7,0%'],['Giá trị giao dịch dự kiến/năm (trđ)','20.000'],['Phí giao dịch (% giá trị GD)','0,15%']]},
+  {t:'table',label:'III. Kết quả ước tính/năm',head:['Chỉ tiêu','Công thức','KQ mẫu'],rows:[['Thu nhập lãi vay (trđ)','Dư nợ BQ × lãi suất','420'],['Thu phí giao dịch (trđ)','Giá trị GD × phí %','30'],['Tổng doanh thu (trđ)','Lãi + phí','450'],['Chi phí vốn (trđ)','Dư nợ BQ × chi phí vốn','245'],['Lợi nhuận ròng (trđ)','Doanh thu − chi phí vốn','205'],['ROI trên dư nợ','Lợi nhuận / dư nợ BQ','5,9%']]},
+  {t:'note',text:'Kết luận (tự tính): ROI 5,9% ≥ ngưỡng tối thiểu 5,0% → ĐẠT hiệu quả. File Excel tự tính & tự kết luận.'},
+ ]},
+ 'BM-03':{title:'PHIẾU THẨM ĐỊNH RỦI RO — DEAL NGOẠI LỆ',sub:'P.QTRR — tuyến phòng vệ thứ 2',type:'Word',file:'UPSC_MV-01_BM-03_Phieu_tham_dinh_rui_ro.docx',secs:[
+  {t:'info',label:'I. Tham chiếu',rows:['Tham chiếu đề xuất (BM-01) số','Khách hàng / Số TK','Môi giới / GĐ Môi giới','Ngày tiếp nhận thẩm định']},
+  {t:'table',label:'II. Đánh giá rủi ro theo tiêu chí',head:['Tiêu chí ngoại lệ','Mức đề xuất','Đánh giá rủi ro','Kết luận'],rows:[['Tỷ lệ cho vay (LTV)','','',''],['Giá chặn','','',''],['Room cho vay','','',''],['Hạn mức cho vay','','',''],['Lãi suất cho vay','','','']]},
+  {t:'table',label:'III. Kiểm tra tuân thủ giới hạn',head:['Nội dung kiểm tra','Đạt / Không','Ghi chú'],rows:[['Hạn mức 1 KH ≤ 3% VCSH','',''],['Giới hạn tập trung mã / nhóm / ngành','',''],['Chỉ tiêu an toàn tài chính (ATTC)','',''],['KH không thuộc diện hạn chế','','']]},
+  {t:'box',label:'IV. Điều kiện kiểm soát kèm theo'},
+  {t:'choice',label:'V. Kết luận thẩm định',text:'☐ Đồng ý     ☐ Đồng ý có điều kiện     ☐ Từ chối'},
+  {t:'sign',roles:['CÁN BỘ P.QTRR thẩm định','TRƯỞNG P.QTRR']},
+ ]},
+ 'BM-04':{title:'TỜ TRÌNH PHÊ DUYỆT NGOẠI LỆ CHÍNH SÁCH MARGIN',sub:'Trình Tổng Giám đốc — đầu mối: P.QTRR',type:'Word',file:'UPSC_MV-01_BM-04_To_trinh_phe_duyet_deal.docx',secs:[
+  {t:'info',label:'Thông tin trình',rows:['Kính gửi = TỔNG GIÁM ĐỐC','Đơn vị trình = Phòng QTRR','Khách hàng / Số TK','Môi giới / GĐ Môi giới']},
+  {t:'table',label:'I. Tóm tắt đề xuất ngoại lệ',head:['Tiêu chí','Chính sách chung','Mức đề xuất','Mã / phạm vi'],rows:[['Tỷ lệ cho vay (LTV)','','',''],['Giá chặn','','',''],['Room cho vay','','',''],['Hạn mức cho vay','','',''],['Lãi suất cho vay','','','']]},
+  {t:'box',label:'II. Ý kiến thẩm định rủi ro (P.QTRR)'},
+  {t:'box',label:'III. Ý kiến đánh giá của P.NCPT (cổ phiếu, doanh nghiệp, khả năng trả nợ)'},
+  {t:'box',label:'IV. Đánh giá hiệu quả khách hàng (Môi giới) — P.QTRR điền thông tin do MG đánh giá'},
+  {t:'box',label:'V. Đề xuất trình duyệt'},
+  {t:'choice',label:'VI. Ý kiến phê duyệt của Tổng Giám đốc',text:'☐ Đồng ý     ☐ Không đồng ý     ☐ Ý kiến khác          Ngày hiệu lực: ………'},
+  {t:'sign',roles:['NGƯỜI LẬP (P.QTRR)','P.NCPT','MÔI GIỚI','TỔNG GIÁM ĐỐC']},
+ ]},
+ 'BM-05':{title:'THÔNG BÁO & XÁC NHẬN CHÍNH SÁCH MARGIN NGOẠI LỆ',sub:'Gửi khách hàng — gộp thông báo kết quả & xác nhận',type:'Word',file:'UPSC_MV-01_BM-05_Thong_bao_xac_nhan_KH.docx',secs:[
+  {t:'info',label:'Thông tin',rows:['Kính gửi Quý khách hàng','Số tài khoản','Môi giới phụ trách']},
+  {t:'table',label:'I. Nội dung chính sách ngoại lệ được duyệt',head:['Tiêu chí','Mức áp dụng','Mã CK / phạm vi'],rows:[['Tỷ lệ cho vay (LTV)','',''],['Giá chặn','',''],['Room cho vay','',''],['Hạn mức cho vay','',''],['Lãi suất cho vay','','']]},
+  {t:'info',label:'Hiệu lực',rows:['Ngày hiệu lực áp dụng','Thời hạn hiệu lực chính sách']},
+  {t:'box',label:'II. Điều kiện kèm theo & khuyến nghị'},
+  {t:'note',text:'III. Xác nhận của khách hàng: “Tôi đã đọc, hiểu và ĐỒNG Ý với chính sách margin ngoại lệ nêu trên cùng các điều kiện kèm theo. Chính sách có hiệu lực kể từ ngày nêu trên.”'},
+  {t:'sign',roles:['ĐẠI DIỆN CÔNG TY','MÔI GIỚI','KHÁCH HÀNG xác nhận']},
+ ]},
+ 'BM-06':{title:'BIÊN BẢN CÀI ĐẶT THÔNG SỐ NGOẠI LỆ & KIỂM SOÁT ĐỘC LẬP',sub:'Maker (P.DVCK) – Checker (P.QTRR)',type:'Word',file:'UPSC_MV-01_BM-06_Bien_ban_cai_dat_kiem_soat.docx',secs:[
+  {t:'info',label:'Tham chiếu',rows:['Quyết định phê duyệt (BM-04) số','Khách hàng / Số TK','Ngày cài đặt']},
+  {t:'table',label:'I. Đối chiếu thông số cài đặt vs phê duyệt',head:['Tiêu chí','Giá trị phê duyệt','Giá trị cài đặt thực tế','Khớp (✓/✗)'],rows:[['Tỷ lệ cho vay (LTV)','','',''],['Giá chặn','','',''],['Room cho vay','','',''],['Hạn mức cho vay','','',''],['Lãi suất cho vay','','',''],['Ngày hiệu lực','','','']]},
+  {t:'choice',label:'II. Kết luận đối chiếu',text:'☐ Khớp hoàn toàn     ☐ Có sai lệch (nêu rõ & xử lý)'},
+  {t:'box',label:'Xử lý sai lệch (nếu có)'},
+  {t:'sign',roles:['MAKER — P.DVCK (cài đặt)','CHECKER — P.QTRR (kiểm soát)']},
+ ]},
+ 'BM-07':{title:'FILE THEO DÕI TOÀN BỘ KHÁCH HÀNG DEAL',sub:'Excel — P.QTRR chủ trì (được phân quyền theo dõi); phối hợp P.NCPT (cổ phiếu/DN) & Môi giới (hiệu quả)',type:'Excel',file:'UPSC_MV-01_BM-07_File_theo_doi_KH_deal.xlsx',secs:[
+  {t:'note',text:'Mỗi khách hàng được duyệt ngoại lệ là một dòng; nhóm cột: NGOẠI LỆ ĐƯỢC DUYỆT · RỦI RO (P.QTRR) · CỔ PHIẾU/DN (P.NCPT) · HIỆU QUẢ (MG).'},
+  {t:'table',label:'Cấu trúc cột & dòng mẫu',head:['Khách hàng','Hạn mức (trđ)','Dư nợ (trđ)','% dùng HM','Rtt','Trạng thái','LN ròng (trđ)','ROI'],rows:[['Nguyễn Văn A','5.000','3.200','64%','135%','An toàn','110','3,4%'],['Công ty CP XYZ','12.000','9.800','82%','95%','Cảnh báo','180','1,8%'],['Phạm Thị D','3.000','2.850','95%','83%','Call margin','70','2,5%']]},
+  {t:'note',text:'Trạng thái tự tính theo Rtt: ≥ ngưỡng cảnh báo → An toàn; giữa → Cảnh báo; < ngưỡng call margin → Call margin. ROI = Lợi nhuận ròng / Dư nợ.'},
+ ]},
+ 'BM-08':{title:'PHIẾU ĐIỀU CHỈNH DEAL NGOẠI LỆ & XỬ LÝ HỆ QUẢ',sub:'Điều chỉnh sau cấp — kèm xử lý call margin / thu nợ đến hạn',type:'Word',file:'UPSC_MV-01_BM-08_Phieu_dieu_chinh_xu_ly.docx',secs:[
+  {t:'info',label:'Tham chiếu',rows:['Deal gốc (BM-04) số','Khách hàng / Số TK','Môi giới phụ trách']},
+  {t:'choice',label:'I. Lý do điều chỉnh',text:'☐ Định kỳ     ☐ Bất thường          Sự kiện kích hoạt: ………………'},
+  {t:'table',label:'II. Nội dung điều chỉnh (siết / nới)',head:['Tiêu chí','Mức hiện tại','Mức điều chỉnh','Hướng (siết/nới)'],rows:[['Tỷ lệ cho vay (LTV)','','',''],['Giá chặn','','',''],['Room cho vay','','',''],['Hạn mức cho vay','','',''],['Lãi suất cho vay','','','']]},
+  {t:'table',label:'III. Đánh giá hệ quả tài khoản & hỗ trợ',head:['Hệ quả','Có/Không','Hành động hỗ trợ (MG/DVCK/QTRR)'],rows:[['Nguy cơ call margin','',''],['Nợ đến hạn phải thu','',''],['Yêu cầu bổ sung ký quỹ','','']]},
+  {t:'info',label:'IV. Phê duyệt & xác nhận',rows:['TGĐ phê duyệt điều chỉnh','Ngày hiệu lực','Khách hàng xác nhận']},
+  {t:'sign',roles:['NGƯỜI ĐỀ XUẤT (P.QTRR)','TỔNG GIÁM ĐỐC','MAKER P.DVCK','CHECKER P.QTRR']},
+ ]},
+};
+function renderForm(s){
+ let h='<div class="fm-org">CÔNG TY CỔ PHẦN CHỨNG KHOÁN UP (UPSC) · Quy trình MV-01</div>';
+ h+='<div class="fm-name">'+s.title+'</div>';
+ if(s.sub)h+='<div class="fm-sub">'+s.sub+'</div>';
+ s.secs.forEach(sec=>{
+  if(sec.label)h+='<div class="fm-sec">'+sec.label+'</div>';
+  if(sec.t==='info'){h+='<div class="fm-info">'+sec.rows.map(r=>{const p=r.split(' = ');return '<div class="fi"><b>'+p[0]+':</b> '+(p[1]||'……………………')+'</div>';}).join('')+'</div>';}
+  else if(sec.t==='table'){h+='<table class="fm-tbl"><tr>'+sec.head.map(x=>'<th>'+x+'</th>').join('')+'</tr>'+sec.rows.map(r=>'<tr>'+r.map(c=>'<td>'+(c||'&nbsp;')+'</td>').join('')+'</tr>').join('')+'</table>';}
+  else if(sec.t==='box'){h+='<div class="fm-box"></div>';}
+  else if(sec.t==='note'){h+='<div class="fm-note">'+sec.text+'</div>';}
+  else if(sec.t==='choice'){h+='<div class="fm-choice">'+sec.text+'</div>';}
+  else if(sec.t==='sign'){h+='<div class="fm-sign">'+sec.roles.map(r=>'<div class="fs"><b>'+r+'</b><span>(Ký, ghi rõ họ tên)</span></div>').join('')+'</div>';}
+ });
+ h+='<a class="fm-dl" href="'+s.file+'" download target="_blank">⬇ Tải file gốc ('+s.type+')</a>';
+ return h;
+}
+function openForm(code){const s=FORMSPEC[code];if(!s)return;document.getElementById('fmCode').textContent=code+' · '+s.type;document.getElementById('fmTitle').textContent=s.title;document.getElementById('fmBody').innerHTML=renderForm(s);document.getElementById('formModal').classList.add('open');}
+function closeForm(){document.getElementById('formModal').classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeForm();});
+
+renderFlow();
+window.addEventListener('resize',()=>syncLanes(document.querySelectorAll('.role-cell').length));
+</script>
+<div class="modal-ov" id="formModal" onclick="if(event.target===this)closeForm()"><div class="modal"><div class="modal-head"><div><div class="mh-code" id="fmCode"></div><div class="mh-title" id="fmTitle"></div></div><button class="modal-close" onclick="closeForm()">&times;</button></div><div class="modal-body" id="fmBody"></div></div></div>
+</body>
+</html>
